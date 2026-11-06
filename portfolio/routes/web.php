@@ -14,4 +14,6 @@ Route::get('/about', function () {
     return view('about');
 });
 
-Route::resource('admin/projects', ProjectController::class)->except(['show']);
+Route::prefix('admin')->name('admin.')->group(function () {
+    Route::resource('projects', ProjectController::class)->except(['show']);
+});

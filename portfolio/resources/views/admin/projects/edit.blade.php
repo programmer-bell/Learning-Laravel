@@ -2,7 +2,7 @@
     <section class="max-w-2xl">
         <h1 class="text-3xl font-bold tracking-tight">Edit Project</h1>
 
-        <form method="POST" action="/admin/projects/{{ $project->id }}" enctype="multipart/form-data" class="mt-8 space-y-5 rounded-2xl border border-stone-200 bg-white p-6 shadow-sm">
+        <form method="POST" action="{{ route('admin.projects.update', $project) }}" enctype="multipart/form-data" class="mt-8 space-y-5 rounded-2xl border border-stone-200 bg-white p-6 shadow-sm">
             @csrf
             @method('PUT')
             <div>

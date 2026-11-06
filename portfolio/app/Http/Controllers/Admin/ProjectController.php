@@ -37,16 +37,18 @@ class ProjectController extends Controller
             'description' => 'required|string',
             'github_url' => 'nullable|url',
             'live_url' => 'nullable|url',
-            'image' => 'nullable|image|max:2048'
+            'image' => 'nullable|image|max:2048',
         ]);
 
-        if ($request->hasFile('image')) {
-            $validatedData['image_path'] = $request->file('image')->store('projects', 'public');
+        if ($request->hasFile('image') && $imagePath = $request->file('image')->store('projects', 'public')) {
+            $validatedData['image_path'] = $imagePath;
         }
+
+        unset($validatedData['image']);
 
         Project::create($validatedData);
 
-        return redirect('admin/projects')->with('success', 'Project created successfully.');
+        return to_route('admin.projects.index')->with('success', 'Project created successfully.');
     }
 
     /**
@@ -67,20 +69,24 @@ class ProjectController extends Controller
             'description' => 'required|string',
             'github_url' => 'nullable|url',
             'live_url' => 'nullable|url',
-            'image' => 'nullable|image|max:2048'
+            'image' => 'nullable|image|max:2048',
         ]);
 
-        if ($request->hasFile('image')) {
-            // Delete the old image if it exists
-            if ($project->image_path) {
-                Storage::disk('public')->delete($project->image_path);
-            }
-            $validatedData['image_path'] = $request->file('image')->store('projects', 'public');
+        $oldImagePath = $project->image_path;
+
+        if ($request->hasFile('image') && $imagePath = $request->file('image')->store('projects', 'public')) {
+            $validatedData['image_path'] = $imagePath;
         }
+
+        unset($validatedData['image']);
 
         $project->update($validatedData);
 
-        return redirect('admin/projects')->with('success', 'Project updated successfully.');
+        if (isset($validatedData['image_path']) && $oldImagePath) {
+            Storage::disk('public')->delete($oldImagePath);
+        }
+
+        return to_route('admin.projects.index')->with('success', 'Project updated successfully.');
     }
 
     /**
@@ -88,6 +94,12 @@ class ProjectController extends Controller
      */
     public function destroy(Project $project)
     {
-        //
+        $project->delete();
+
+        if ($project->image_path) {
+            Storage::disk('public')->delete($project->image_path);
+        }
+
+        return to_route('admin.projects.index')->with('success', 'Project deleted successfully.');
     }
 }
