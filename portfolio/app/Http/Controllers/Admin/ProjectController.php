@@ -31,7 +31,21 @@ class ProjectController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validatedData = $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'required|string',
+            'github_url' => 'nullable|url',
+            'live_url' => 'nullable|url',
+            'image' => 'nullable|image|max:2048'
+        ]);
+
+        if ($request->hasFile('image')) {
+            $validatedData['image_path'] = $request->file('image')->store('projects', 'public');
+        }
+
+        Project::create($validatedData);
+
+        return redirect('admin/projects')->with('success', 'Project created successfully.');
     }
 
     /**
