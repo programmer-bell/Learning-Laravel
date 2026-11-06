@@ -15,5 +15,7 @@ Route::get('/about', function () {
 });
 
 Route::prefix('admin')->name('admin.')->group(function () {
-    Route::resource('projects', ProjectController::class)->except(['show']);
+    Route::resource('projects', ProjectController::class)
+    ->except(['show'])
+    ->middleware('auth.basic');
 });
