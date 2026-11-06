@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\ProjectController;
 use App\Models\Project;
 use Illuminate\Support\Facades\Route;
 
@@ -12,3 +13,5 @@ Route::get('/', function () {
 Route::get('/about', function () {
     return view('about');
 });
+
+Route::resource('admin/projects', ProjectController::class)->except(['show']);
