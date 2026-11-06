@@ -1,8 +1,15 @@
 <?php
 
 use App\Models\Project;
+use App\Models\User;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+
+beforeEach(function () {
+    $user = User::factory()->create();
+
+    $this->withBasicAuth($user->email, 'password');
+});
 
 test('projects can be viewed and the create and edit forms are available', function () {
     $project = Project::create([

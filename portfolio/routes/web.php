@@ -8,14 +8,14 @@ Route::get('/', function () {
     $projects = Project::latest()->get();
 
     return view('home', ['name' => 'Bell', 'projects' => $projects]);
-});
+})->name('home');
 
 Route::get('/about', function () {
     return view('about');
-});
+})->name('about');
 
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::resource('projects', ProjectController::class)
-    ->except(['show'])
-    ->middleware('auth.basic');
+        ->except(['show'])
+        ->middleware('auth.basic');
 });
